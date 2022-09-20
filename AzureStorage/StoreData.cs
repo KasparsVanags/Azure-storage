@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using Azure.Data.Tables;
 using Azure.Storage.Blobs;
 using Microsoft.Azure.WebJobs;
@@ -17,24 +18,24 @@ namespace AzureStorage
         public StoreData(BlobServiceClient blobServiceClient, TableServiceClient tableServiceClient)
         {
             _tableClient = tableServiceClient.GetTableClient(TABLE_NAME);
-            _tableClient.CreateIfNotExists();
             _blobContainerClient = blobServiceClient.GetBlobContainerClient(CONTAINER_NAME);
-            _blobContainerClient.CreateIfNotExists();
         }
 
         [FunctionName("StoreData")]
-        public void Run([TimerTrigger("* * * * *")] TimerInfo myTimer, ILogger log)
+        public async Task Run([TimerTrigger("* * * * *")] TimerInfo myTimer, ILogger log)
         {
             log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
             var success = false;
-            var nextIndex = "";
+            var nextIndex = "0";
             try
             {
+                await _tableClient.CreateIfNotExistsAsync();
+                await _blobContainerClient.CreateIfNotExistsAsync();
                 var webclient = new WebClient();
                 var content = webclient.DownloadString(DATA_SOURCE);
                 nextIndex = GetNextIndex(_tableClient);
                 var blob = _blobContainerClient.GetBlobClient(nextIndex);
-                blob.Upload(BinaryData.FromString(content));
+                await blob.UploadAsync(BinaryData.FromString(content));
                 success = true;
             }
             catch (Exception ex)
@@ -49,7 +50,7 @@ namespace AzureStorage
                 Success = success
             };
 
-            _tableClient.AddEntity(tableEntry);
+            await _tableClient.AddEntityAsync(tableEntry);
         }
 
         private string GetNextIndex(TableClient tableClient)
