@@ -32,10 +32,10 @@ namespace AzureStorage
                 await _tableClient.CreateIfNotExistsAsync();
                 await _blobContainerClient.CreateIfNotExistsAsync();
                 var webclient = new WebClient();
-                var content = webclient.DownloadString(DATA_SOURCE);
+                var content = webclient.OpenRead(DATA_SOURCE);
                 nextIndex = GetNextIndex(_tableClient);
                 var blob = _blobContainerClient.GetBlobClient(nextIndex);
-                await blob.UploadAsync(BinaryData.FromString(content));
+                await blob.UploadAsync(content);
                 success = true;
             }
             catch (Exception ex)
