@@ -1,0 +1,23 @@
+{
+  "dependencies": {
+    "appInsights1": {
+      "type": "appInsights"
+    },
+    "storage1": {
+      "type": "storage",
+      "connectionId": "AzureWebJobsStorage"
+    }
+  },
+  "Storage": {
+    "BlobContainerName": "blob",
+    "ServiceUri": "https://codelex.blob.core.windows.net"
+  },
+  "Table": {
+    "PartitionKey": "idklol",
+    "TableName": "log",
+    "ConnectionString": "DefaultEndpointsProtocol=https;AccountName=codelex;AccountKey=5sne5WvEGog6GnF6UOxWILgqy9gtpTR2M3MNmsR1EdR7cpUI8KytxfMx7wPh6PcDz9uGILvMQdAN+AStto7IEA==;EndpointSuffix=core.windows.net"
+  },
+  "Source": {
+    "Address": "https://api.publicapis.org/random?auth=null"
+  }
+}
