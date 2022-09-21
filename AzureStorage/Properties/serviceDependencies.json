@@ -9,12 +9,15 @@
     }
   },
   "Storage": {
+    "BlobContainerName": "blob",
     "ServiceUri": "https://codelex.blob.core.windows.net"
   },
   "Table": {
-    "connectionString": "DefaultEndpointsProtocol=https;AccountName=codelex;AccountKey=5sne5WvEGog6GnF6UOxWILgqy9gtpTR2M3MNmsR1EdR7cpUI8KytxfMx7wPh6PcDz9uGILvMQdAN+AStto7IEA==;EndpointSuffix=core.windows.net"
+    "PartitionKey": "idklol",
+    "TableName": "log",
+    "ConnectionString": "DefaultEndpointsProtocol=https;AccountName=codelex;AccountKey=5sne5WvEGog6GnF6UOxWILgqy9gtpTR2M3MNmsR1EdR7cpUI8KytxfMx7wPh6PcDz9uGILvMQdAN+AStto7IEA==;EndpointSuffix=core.windows.net"
   },
   "Source": {
-    "SourceUri": "https://api.publicapis.org/random?auth=null"
+    "Address": "https://api.publicapis.org/random?auth=null"
   }
 }

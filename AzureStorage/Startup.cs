@@ -11,14 +11,15 @@ namespace AzureStorage
 {
     public class Startup : FunctionsStartup
     {
+        public static readonly IConfigurationRoot Config = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("Properties/serviceDependencies.json").Build();
+        
         public override void Configure(IFunctionsHostBuilder builder)
         {
-            var config = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("Properties/serviceDependencies.json").Build();
             builder.Services.AddAzureClients(client =>
             {
-                client.AddBlobServiceClient(config.GetSection("Storage"));
-                client.AddTableServiceClient(config.GetSection("Table"));
+                client.AddBlobServiceClient(Config.GetSection("Storage"));
+                client.AddTableServiceClient(Config.GetSection("Table"));
                 client.UseCredential(new DefaultAzureCredential());
             });
         }

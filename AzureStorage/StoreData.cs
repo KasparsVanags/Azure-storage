@@ -6,7 +6,7 @@ using Azure.Data.Tables;
 using Azure.Storage.Blobs;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
-using static AzureStorage.Constants;
+using static AzureStorage.Startup;
 
 namespace AzureStorage
 {
@@ -17,8 +17,8 @@ namespace AzureStorage
 
         public StoreData(BlobServiceClient blobServiceClient, TableServiceClient tableServiceClient)
         {
-            _tableClient = tableServiceClient.GetTableClient(TABLE_NAME);
-            _blobContainerClient = blobServiceClient.GetBlobContainerClient(CONTAINER_NAME);
+            _tableClient = tableServiceClient.GetTableClient(Config["Table:TableName"]);
+            _blobContainerClient = blobServiceClient.GetBlobContainerClient(Config["Storage:BlobContainerName"]);
         }
 
         [FunctionName("StoreData")]
@@ -32,7 +32,7 @@ namespace AzureStorage
                 await _tableClient.CreateIfNotExistsAsync();
                 await _blobContainerClient.CreateIfNotExistsAsync();
                 var webclient = new WebClient();
-                var content = webclient.OpenRead(DATA_SOURCE);
+                var content = webclient.OpenRead(Config["Source:Address"]);
                 nextIndex = GetNextIndex(_tableClient);
                 var blob = _blobContainerClient.GetBlobClient(nextIndex);
                 await blob.UploadAsync(content);
@@ -40,13 +40,13 @@ namespace AzureStorage
             }
             catch (Exception ex)
             {
-                log.LogInformation(ex.ToString());
+                log.LogError(ex.ToString());
             }
 
             var tableEntry = new Record
             {
                 RowKey = nextIndex,
-                PartitionKey = PARTITION_KEY,
+                PartitionKey = Config["Table:PartitionKey"],
                 Success = success
             };
 
