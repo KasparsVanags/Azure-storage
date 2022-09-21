@@ -36,7 +36,8 @@ namespace AzureStorage
             string to = req.Query["to"];
 
             var requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-            dynamic data = JsonConvert.DeserializeObject(requestBody);
+            var response = new { from = "", to = "" };
+            var data = JsonConvert.DeserializeAnonymousType(requestBody, response);
             from ??= data?.from;
             to ??= data?.to;
 
@@ -63,7 +64,8 @@ namespace AzureStorage
             string name = req.Query["name"];
 
             var requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-            dynamic data = JsonConvert.DeserializeObject(requestBody);
+            var response = new { name = "" };
+            var data = JsonConvert.DeserializeAnonymousType(requestBody, response);
             name ??= data?.name;
 
             return name != null
